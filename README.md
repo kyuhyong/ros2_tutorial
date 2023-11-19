@@ -15,24 +15,42 @@ Once colcon build is done for the first time, make sure to source setup.bash und
 source install/setup.bash
 ```
 
-## tutorial_rclcpp_package
+## tutorial_rclcpp_pub_sub
 
-**tutorial_rclcpp_package** constains executable **rclcpp_example**.
+**tutorial_rclcpp_pub_sub** constains executable **rclcpp_pub_sub**.
 Also includes
-- msg/ Custom message
-- srv/ 
+- Custom messages in /msg folder
+
+## tutorial_rclcpp_service
+
+**tutorial_rclcpp_service** package contains executable **rclcpp_service_server** 
+which includes 
+- Custom services in /srv folder
+
+and create a server to perform response upon request from other node.
 
 
 ## Execute nodes
 
-To run rclcpp example, 
+To run rclcpp_pub_sub example, 
 
 ```
-$ ros2 run tutorial_rclcpp_package rclcpp_example
+$ ros2 run tutorial_rclcpp_pub_sub rclcpp_pub_sub
 ```
 
 To run rclpy example,
 
 ```
-$ ros2 run tutorial_rclpy_package rclpy_example 
+$ ros2 run tutorial_rclpy_package rclpy_pub_sub 
+```
+
+To run rclcpp_service_server example
+
+```
+$ ros2 run tutorial_rclcpp_service rclcpp_service_server
+```
+
+To send request to server
+```
+$ ros2 run tutorial_rclpy_package rclpy_service_client
 ```
