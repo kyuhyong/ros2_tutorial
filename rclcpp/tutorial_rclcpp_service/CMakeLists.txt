@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(tutorial_rclcpp_package)
+project(tutorial_rclcpp_service)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -17,49 +17,43 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
-
-# To include any dependent messages
 find_package(std_msgs REQUIRED)
+find_package(tutorial_rclcpp_pub_sub REQUIRED)
 
 # To generate custom interface
 find_package(rosidl_default_generators REQUIRED)
-
-set(msg_files
-  "msg/TutorialClient.msg"
-)
 
 set(srv_files
   "srv/TutorialServiceAdd.srv"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-  ${msg_files}
   ${srv_files}
  )
 
-add_executable(rclcpp_example src/rclcpp_example.cpp)
+add_executable(rclcpp_service_server src/rclcpp_service_server.cpp)
 
-# To include rclcpp to project
-ament_target_dependencies(rclcpp_example rclcpp std_msgs)
+# To inlcude tutorial_rclcpp_pub_sub message
+ament_target_dependencies(
+  rclcpp_service_server
+  rclcpp
+  std_msgs
+  tutorial_rclcpp_pub_sub
+)
 
-target_link_libraries(rclcpp_example ${rclcpp_LIBRARIES})
-
-target_include_directories(rclcpp_example PUBLIC
+target_include_directories(rclcpp_service_server PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
 install(TARGETS 
-  rclcpp_example
+  rclcpp_service_server
   DESTINATION lib/${PROJECT_NAME})
 
 # To include custom message to current project
-rosidl_target_interfaces(rclcpp_example
+rosidl_target_interfaces(
+  rclcpp_service_server
   ${PROJECT_NAME} "rosidl_typesupport_cpp")
-
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

@@ -4,26 +4,21 @@ from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 
-from tutorial_rclcpp_package.msg import TutorialClient      # Custom message
-from tutorial_rclcpp_package.srv import TutorialServiceAdd      # Custom service
+from tutorial_rclcpp_pub_sub.msg import TutorialClient      # Custom message
+from tutorial_rclcpp_service.srv import TutorialServiceAdd      # Custom service
 from std_msgs.msg import String
 
 
 class MinimalRclpyNode(Node):
 
     def __init__(self):
-        super().__init__('minimal_rclpy_node')
+        super().__init__('rclpy_service_client')
         
         self.subscription = self.create_subscription(   # Create a subscription
             TutorialClient,                             # with message type
             'topic',                                    # path to listen topic
             self.cb_new_client_message,                 # callback function to be called when new topic received
             10)                                         # 
-
-        self.pub_string = self.create_publisher(        # Create a publisher
-            String,                                     # Message type
-            'talker',                                   # path to publish a topic
-            10)                                         #
 
         self.cb = None
         self.cli = self.create_client(                  # Create a service client
@@ -41,20 +36,17 @@ class MinimalRclpyNode(Node):
             timer_period,                               # Timer period
             self.cb_timer_update,                       # Callback function
             callback_group = self.timer_cb)             # Add to callback group
-        self.pub_cnt = 0
+        self.timer_cnt = 0
 
     def cb_new_client_message(self, msg):
         self.get_logger().info('Input client: "%d"' % msg.count) # CHANGE
 
     async def cb_timer_update(self) -> None:
-        msg = String()
-        msg.data = 'Hello %d'%self.pub_cnt
-        self.pub_string.publish(msg)
-        response = await self.send_request(self.pub_cnt, 10)
+        response = await self.send_request(self.timer_cnt, 10)
         self.get_logger().info(
-            "Result of add_two_ints: for %d + %d = %d" % (self.pub_cnt, 10, response.sum)
+            "Result of add_two_ints: for %d + %d = %d" % (self.timer_cnt, 10, response.sum)
         )
-        self.pub_cnt += 1
+        self.timer_cnt += 1
 
     async def send_request(self, a, b):
         self.req.a = a

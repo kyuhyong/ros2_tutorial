@@ -4,8 +4,8 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"                              // Standard string message
-#include "tutorial_rclcpp_package/msg/tutorial_client.hpp"      // Custom message
-#include "tutorial_rclcpp_package/srv/tutorial_service_add.hpp" // Custom service
+#include "tutorial_rclcpp_pub_sub/msg/tutorial_client.hpp"      // Custom message
+#include "tutorial_rclcpp_service/srv/tutorial_service_add.hpp" // Custom service
 
 using namespace std::chrono_literals;
 
@@ -13,23 +13,10 @@ class MinimalRclcppNode : public rclcpp::Node
 {
 public:
     MinimalRclcppNode()
-    : Node("minimal_rclcpp_Node"), count_(0)
+    : Node("rclcpp_service_server"), count_(0)
     {
-        // Create a subscription
-        subscription_ = this->create_subscription<std_msgs::msg::String>(   // Message type
-            "talker",                           // Topic to subscribe
-            10,                                 // 
-            std::bind(&MinimalRclcppNode::cb_new_string_msg,  // Callback function
-            this, 
-            std::placeholders::_1));
-
-        // Create a publisher
-        publisher_ = this->create_publisher<tutorial_rclcpp_package::msg::TutorialClient>(      // Message type
-            "topic",                            // Topic to publish
-            10);
-
         // Create a server to handle service
-        service_ = this->create_service<tutorial_rclcpp_package::srv::TutorialServiceAdd>(
+        service_ = this->create_service<tutorial_rclcpp_service::srv::TutorialServiceAdd>(
             "add_two_ints",                     // Topic to service
             std::bind(
                 &MinimalRclcppNode::handle_service, 
@@ -47,22 +34,16 @@ public:
 private:
     void cb_timer_update()
     {
-        auto message = tutorial_rclcpp_package::msg::TutorialClient();                               // CHANGE
+        auto message = tutorial_rclcpp_pub_sub::msg::TutorialClient();                               // CHANGE
         message.name = "Foxy";
         message.age = 25;
         message.count = this->count_++;                                        // CHANGE
         //RCLCPP_INFO(this->get_logger(), "Publishing: Name:'%s' AGE:'%d' Count: %d", message.name.c_str(), message.age, message.count);    // CHANGE
-        publisher_->publish(message);
+        //publisher_->publish(message);
     }
-
-    void cb_new_string_msg(const std_msgs::msg::String::SharedPtr msg) const
-    {
-        RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
-    }
-
     void handle_service(
-        const std::shared_ptr<tutorial_rclcpp_package::srv::TutorialServiceAdd::Request> request,
-        std::shared_ptr<tutorial_rclcpp_package::srv::TutorialServiceAdd::Response>      response)
+        const std::shared_ptr<tutorial_rclcpp_service::srv::TutorialServiceAdd::Request> request,
+        std::shared_ptr<tutorial_rclcpp_service::srv::TutorialServiceAdd::Response>      response)
     {
         response->sum = request->a + request->b;
         RCLCPP_INFO(this->get_logger(), "Incoming request\na: %ld" " b: %ld",
@@ -71,9 +52,7 @@ private:
     }
 
     rclcpp::TimerBase::SharedPtr timer_;
-    rclcpp::Publisher<tutorial_rclcpp_package::msg::TutorialClient>::SharedPtr publisher_;      //Publisher
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;                       //Subscription
-    rclcpp::Service<tutorial_rclcpp_package::srv::TutorialServiceAdd>::SharedPtr service_;      //Service 
+    rclcpp::Service<tutorial_rclcpp_service::srv::TutorialServiceAdd>::SharedPtr service_;      //Service 
     size_t count_;
 };
 

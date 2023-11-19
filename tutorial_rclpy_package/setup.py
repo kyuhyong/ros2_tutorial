@@ -13,14 +13,15 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='kh',
-    maintainer_email='kh@todo.todo',
+    maintainer='Kyuhyong',
+    maintainer_email='Kyuhyong@gmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'rclpy_example = tutorial_rclpy_package.rclpy_example:main'
+            'rclpy_pub_sub = tutorial_rclpy_package.rclpy_pub_sub:main',
+            'rclpy_service_client = tutorial_rclpy_package.rclpy_service_client:main'
         ],
     },
 )
