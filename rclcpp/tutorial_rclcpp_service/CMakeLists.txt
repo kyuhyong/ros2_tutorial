@@ -41,6 +41,23 @@ ament_target_dependencies(
   std_msgs
   tutorial_rclcpp_pub_sub
 )
+# To include custom message to current project
+rosidl_target_interfaces(
+  rclcpp_service_server
+  ${PROJECT_NAME} "rosidl_typesupport_cpp")
+add_executable(rclcpp_service_client src/rclcpp_service_client.cpp)
+
+# To inlcude tutorial_rclcpp_pub_sub message
+ament_target_dependencies(
+  rclcpp_service_client
+  rclcpp
+  std_msgs
+  tutorial_rclcpp_pub_sub
+)
+# To include custom message to current project
+rosidl_target_interfaces(
+  rclcpp_service_client
+  ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
 target_include_directories(rclcpp_service_server PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -48,12 +65,10 @@ target_include_directories(rclcpp_service_server PUBLIC
 
 install(TARGETS 
   rclcpp_service_server
+  rclcpp_service_client
   DESTINATION lib/${PROJECT_NAME})
 
-# To include custom message to current project
-rosidl_target_interfaces(
-  rclcpp_service_server
-  ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

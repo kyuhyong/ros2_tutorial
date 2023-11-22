@@ -34,15 +34,19 @@ set(msg_files
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_files}
- )
-
-add_executable(rclcpp_pub_sub src/rclcpp_pub_sub.cpp)
-# To include rclcpp to project
-ament_target_dependencies(
-  rclcpp_pub_sub 
-  rclcpp 
-  std_msgs
 )
+
+#For each executable
+add_executable(rclcpp_pub_sub src/rclcpp_pub_sub.cpp)
+ament_target_dependencies(rclcpp_pub_sub rclcpp std_msgs)
+rosidl_target_interfaces(rclcpp_pub_sub
+  ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
+add_executable(rclcpp_pub src/rclcpp_pub.cpp)
+ament_target_dependencies(rclcpp_pub rclcpp std_msgs)
+rosidl_target_interfaces(rclcpp_pub
+  ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
 
 target_include_directories(rclcpp_pub_sub PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -50,13 +54,8 @@ target_include_directories(rclcpp_pub_sub PUBLIC
 
 install(TARGETS 
   rclcpp_pub_sub
+  rclcpp_pub
   DESTINATION lib/${PROJECT_NAME})
-
-# To include custom message to current project
-rosidl_target_interfaces(
-  rclcpp_pub_sub
-  ${PROJECT_NAME} "rosidl_typesupport_cpp")
-
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
